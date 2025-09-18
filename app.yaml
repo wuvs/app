@@ -12,7 +12,7 @@ spec:
   source:
     chart: app
     repoURL: https://wuvs.github.io/app/
-    targetRevision: 0.3.0
+    targetRevision: 0.3.1
   syncPolicy:
     syncOptions:
       - CreateNamespace=true
