@@ -9,6 +9,7 @@
 ## CLI Tools
 - kind
 - kubectl
+- karmadactl
 - helm
 - cloud-provider-kind
 - argocd
