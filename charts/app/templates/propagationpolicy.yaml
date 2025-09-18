@@ -1,0 +1,57 @@
+apiVersion: policy.karmada.io/v1alpha1
+kind: PropagationPolicy
+metadata:
+  name: {{ include "app.fullname" . }}-phased
+  namespace: {{ include "app.namespace" . }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+spec:
+  resourceSelectors:
+    - apiVersion: argoproj.io/v1alpha1
+      kind: Rollout
+      namespace: {{ include "app.namespace" . }}
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/name: {{ include "app.name" . }}
+    - apiVersion: v1
+      kind: Service
+      namespace: {{ include "app.namespace" . }}
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: {{.Release.Name }}
+          app.kubernetes.io/name: {{ include "app.name" . }}
+    - apiVersion: v1
+      kind: ServiceAccount
+      namespace: {{ include "app.namespace" . }}
+      labelSelector:
+        matchLabels:
+          app.kubernetes.io/instance: {{ .Release.Name }}
+          app.kubernetes.io/name: {{ include "app.name" . }}
+  {{- $allClusters := list }}
+  {{- range $phase := .Values.karmada.phasedRollout }}
+    {{- $allClusters = concat $allClusters $phase.clusters }}
+  {{- end }}
+  {{- $allClusters = $allClusters | uniq }}
+  placement:
+    clusterAffinity:
+      clusterNames:
+        {{- $allClusters | toYaml | nindent 8 }}
+  {{- $firstPhaseClusters := list }}
+  {{- if .Values.karmada.phasedRollout }}
+    {{- $firstPhaseClusters = (first .Values.karmada.phasedRollout).clusters }}
+  {{- end }}
+
+  {{- $suspendedClusters := list }}
+  {{- range $cluster := $allClusters }}
+    {{- if not (has $cluster $firstPhaseClusters) }}
+      {{- $suspendedClusters = append $suspendedClusters $cluster }}
+    {{- end }}
+  {{- end }}
+
+  {{- if $suspendedClusters }}
+  suspension:
+    dispatchingOnClusters:
+      clusterNames:
+        {{- $suspendedClusters | toYaml | nindent 8 }}
+  {{- end }}

@@ -1,0 +1,53 @@
+replicaCount: 4
+
+image:
+  repository: nginx
+  pullPolicy: IfNotPresent
+  tag: "1.29"
+
+imagePullSecrets:
+nameOverride: ""
+fullnameOverride: ""
+namespaceOverride: ""
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+resources: {}
+
+livenessProbe:
+  httpGet:
+    path: /
+    port: http
+readinessProbe:
+  httpGet:
+    path: /
+    port: http
+
+nodeSelector: {}
+tolerations:
+affinity: {}
+
+karmada:
+  phasedRollout:
+    - phaseName: "wave-1"
+      clusters:
+        - member1
+        - member2
+    - phaseName: "wave-2"
+      clusters:
+        - member3
+        - member4
