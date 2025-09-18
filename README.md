@@ -121,3 +121,26 @@ kubectl argo rollouts get rollout app -n app --context member4 --watch
 kubectl argo rollouts promote app -napp --context member3
 kubectl argo rollouts promote app -napp --context member4
 ```
+
+
+```bash
+karmadactl get pods --operation-scope=members -napp
+
+NAME                  CLUSTER   READY   STATUS    RESTARTS   AGE
+app-cb4d9b557-86j6x   member1   1/1     Running   0          55m
+app-cb4d9b557-9tnsh   member1   1/1     Running   0          55m
+app-cb4d9b557-hfw7h   member1   1/1     Running   0          55m
+app-cb4d9b557-x6hnj   member1   1/1     Running   0          55m
+app-cb4d9b557-9mldv   member2   1/1     Running   0          55m
+app-cb4d9b557-pg55b   member2   1/1     Running   0          55m
+app-cb4d9b557-xfj6x   member2   1/1     Running   0          55m
+app-cb4d9b557-zpx8q   member2   1/1     Running   0          55m
+app-cb4d9b557-qthtz   member3   1/1     Running   0          48m
+app-cb4d9b557-vnh22   member3   1/1     Running   0          48m
+app-cb4d9b557-w9tp7   member3   1/1     Running   0          48m
+app-cb4d9b557-x4dd4   member3   1/1     Running   0          48m
+app-cb4d9b557-2vf2l   member4   1/1     Running   0          48m
+app-cb4d9b557-f7gmq   member4   1/1     Running   0          48m
+app-cb4d9b557-fpgxn   member4   1/1     Running   0          48m
+app-cb4d9b557-gskqk   member4   1/1     Running   0          48m
+```
